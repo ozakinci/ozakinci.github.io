@@ -14,19 +14,28 @@
             margin: 20px 0;
             font-size: 18px;
         }
+        .birthday-entry span {
+            display: inline-block;
+            width: 200px;
+            text-align: left;
+        }
         #result {
             margin-top: 20px;
-            font-size: 24px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
     <h1>Birthday Countdown</h1>
-    <div class="birthday-entry" data-name="Alice" data-date="2024-08-15T00:00:00">Alice's Birthday</div>
-    <div class="birthday-entry" data-name="Bob" data-date="2024-12-25T00:00:00">Bob's Birthday</div>
-    <div class="birthday-entry" data-name="Charlie" data-date="2024-05-30T00:00:00">Charlie's Birthday</div>
-
-    <div id="result"></div>
+    <div class="birthday-entry" data-name="Alice" data-date="2024-08-15T00:00:00">
+        <span>Alice's Birthday</span> <span class="countdown"></span>
+    </div>
+    <div class="birthday-entry" data-name="Bob" data-date="2024-12-25T00:00:00">
+        <span>Bob's Birthday</span> <span class="countdown"></span>
+    </div>
+    <div class="birthday-entry" data-name="Charlie" data-date="2024-05-30T00:00:00">
+        <span>Charlie's Birthday</span> <span class="countdown"></span>
+    </div>
 
     <script src="script.js"></script>
 </body>
