@@ -1,6 +1,3 @@
-const targetDate = new Date('1974-11-05T00:00:00'); // Replace with your target date
-const result = document.getElementById('result');
-
 function calculateTimeDifference(startDate, endDate) {
     const diff = endDate - startDate;
 
@@ -22,20 +19,32 @@ function calculateTimeDifference(startDate, endDate) {
     };
 }
 
-function updateTimer() {
+function updateTimers() {
     const now = new Date();
-    const timeDiff = targetDate > now ? calculateTimeDifference(now, targetDate) : calculateTimeDifference(targetDate, now);
-    const isFuture = targetDate > now;
+    const resultsContainer = document.getElementById('result');
+    resultsContainer.innerHTML = ''; // Clear previous results
 
-    const message = isFuture
-        ? `Countdown: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`
-        : `Countup: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`;
+    const birthdayEntries = document.querySelectorAll('.birthday-entry');
 
-    result.innerHTML = message;
+    birthdayEntries.forEach(entry => {
+        const name = entry.getAttribute('data-name');
+        const targetDate = new Date(entry.getAttribute('data-date'));
+        const isFuture = targetDate > now;
+
+        const timeDiff = isFuture ? calculateTimeDifference(now, targetDate) : calculateTimeDifference(targetDate, now);
+        const message = isFuture
+            ? `Countdown to ${name}'s birthday: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`
+            : `Countup since ${name}'s birthday: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`;
+
+        // Create a new div element for each birthday
+        const resultDiv = document.createElement('div');
+        resultDiv.textContent = message;
+        resultsContainer.appendChild(resultDiv);
+    });
 }
 
 // Update every second
-setInterval(updateTimer, 1000);
+setInterval(updateTimers, 1000);
 
 // Initial update
-updateTimer();
+updateTimers();
