@@ -1,47 +1,41 @@
-function startTimer() {
-    const input = document.getElementById('dateInput').value;
-    const result = document.getElementById('result');
-    
-    if (!input) {
-        result.innerHTML = 'Please enter a date.';
-        return;
-    }
+const targetDate = new Date('2024-12-31T23:59:59'); // Replace with your target date
+const result = document.getElementById('result');
 
-    const targetDate = new Date(input);
+function calculateTimeDifference(startDate, endDate) {
+    const diff = endDate - startDate;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    const years = Math.floor(days / 365);
+    const months = Math.floor((days % 365) / 30);
+
+    return {
+        years,
+        months,
+        days: days % 30,
+        hours: hours % 24,
+        minutes: minutes % 60,
+        seconds: seconds % 60
+    };
+}
+
+function updateTimer() {
     const now = new Date();
+    const timeDiff = targetDate > now ? calculateTimeDifference(now, targetDate) : calculateTimeDifference(targetDate, now);
     const isFuture = targetDate > now;
 
-    function updateTimer() {
-        const currentTime = new Date();
-        const difference = targetDate - currentTime;
-        
-        let message;
-        
-        if (isFuture) {
-            if (difference <= 0) {
-                message = 'The event is happening now!';
-            } else {
-                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-                message = `Countdown: ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
-            }
-        } else {
-            const elapsed = now - targetDate;
-            const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
-            message = `Countup: ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
-        }
+    const message = isFuture
+        ? `Countdown: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`
+        : `Countup: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`;
 
-        result.innerHTML = message;
-    }
-
-    // Update every second
-    setInterval(updateTimer, 1000);
-
-    // Initial update
-    updateTimer();
+    result.innerHTML = message;
 }
+
+// Update every second
+setInterval(updateTimer, 1000);
+
+// Initial update
+updateTimer();
