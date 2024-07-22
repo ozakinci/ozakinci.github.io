@@ -1,4 +1,4 @@
-const targetDate = new Date('2024-12-31T23:59:59'); // Replace with your target date
+const targetDate = new Date('1974-11-05T00:00:00'); // Replace with your target date
 const result = document.getElementById('result');
 
 function calculateTimeDifference(startDate, endDate) {
