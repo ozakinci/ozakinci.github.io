@@ -21,9 +21,6 @@ function calculateTimeDifference(startDate, endDate) {
 
 function updateTimers() {
     const now = new Date();
-    const resultsContainer = document.getElementById('result');
-    resultsContainer.innerHTML = ''; // Clear previous results
-
     const birthdayEntries = document.querySelectorAll('.birthday-entry');
 
     birthdayEntries.forEach(entry => {
@@ -33,13 +30,12 @@ function updateTimers() {
 
         const timeDiff = isFuture ? calculateTimeDifference(now, targetDate) : calculateTimeDifference(targetDate, now);
         const message = isFuture
-            ? `Countdown to ${name}'s birthday: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`
-            : `Countup since ${name}'s birthday: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`;
+            ? `Countdown: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`
+            : `Countup: ${timeDiff.years} years ${timeDiff.months} months ${timeDiff.days} days ${timeDiff.hours} hours ${timeDiff.minutes} minutes ${timeDiff.seconds} seconds`;
 
-        // Create a new div element for each birthday
-        const resultDiv = document.createElement('div');
-        resultDiv.textContent = message;
-        resultsContainer.appendChild(resultDiv);
+        // Update the countdown span next to each birthday entry
+        const countdownSpan = entry.querySelector('.countdown');
+        countdownSpan.textContent = message;
     });
 }
 
