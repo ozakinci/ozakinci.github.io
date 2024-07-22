@@ -1,15 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Countdown & Count up</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Countdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .birthday-entry {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
+    <h1>Birthday Countdown</h1>
+    <div class="birthday-entry" data-name="Alice" data-date="2024-08-15T00:00:00">Alice's Birthday</div>
+    <div class="birthday-entry" data-name="Bob" data-date="2024-12-25T00:00:00">Bob's Birthday</div>
+    <div class="birthday-entry" data-name="Charlie" data-date="2024-05-30T00:00:00">Charlie's Birthday</div>
 
-    <h1>Countdown/Countup Timer</h1>
-    
     <div id="result"></div>
 
-    Tayfun: <script src="script.js"></script>
-    
+    <script src="script.js"></script>
 </body>
 </html>
