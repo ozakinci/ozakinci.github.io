@@ -1,48 +1,1003 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Countdown</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        .birthday-entry {
-            margin: 20px 0;
-            font-size: 18px;
-        }
-        .birthday-entry span {
-            display: inline-block;
-            width: 200px;
-            text-align: left;
-        }
-        #result {  
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScaleBuddy - Music Theory Reference</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #5a67d8;
+      margin-bottom: 8px;
+      font-size: 2.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 35px;
+      font-size: 1em;
+      font-weight: 400;
+    }
+
+    .input-section {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .dropdowns-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .dropdown-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.95em;
+    }
+
+    select {
+      padding: 14px 16px;
+      font-size: 1.05em;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    select:hover {
+      border-color: #a5b4fc;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Subtle highlighting for unselected dropdown */
+    select:has(option[value=""]:not(:checked)) {
+      border-color: #fbbf24;
+      background: #fffbeb;
+    }
+
+    select:invalid {
+      border-color: #fbbf24;
+      background: #fffbeb;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.9em;
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #fee2e2;
+      border-radius: 8px;
+      display: none;
+      font-weight: 500;
+      border-left: 4px solid #dc2626;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .results-section {
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      border-left: 5px solid #8b5cf6;
+    }
+
+    .result-card h3 {
+      color: #6d28d9;
+      margin-bottom: 12px;
+      font-size: 1.2em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-content {
+      color: #374151;
+      font-size: 1.05em;
+      line-height: 1.8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-weight: 500;
+    }
+
+    .chord-display {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #4f46e5;
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+      border-radius: 12px;
+      letter-spacing: 1px;
+    }
+
+    .scale-notes {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .chord-list {
+      font-size: 0.95em;
+      line-height: 2;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .chord-item {
+      padding: 4px 0;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .chord-item:last-child {
+      border-bottom: none;
+    }
+
+    .chord-name {
+      font-weight: 700;
+      color: #8b5cf6;
+      margin-right: 8px;
+    }
+
+    .chord-notes {
+      color: #6b7280;
+      font-family: 'Courier New', monospace;
+    }
+
+    .loading {
+      text-align: center;
+      color: #6b7280;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 25px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .dropdowns-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .result-card {
+        padding: 18px;
+      }
+
+      .chord-display {
+        font-size: 1.4em;
+      }
+    }
+
+    /* Scrollbar styling for long lists */
+    .result-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .result-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .result-content::-webkit-scrollbar-thumb {
+      background: #a5b4fc;
+      border-radius: 10px;
+    }
+
+    .result-content::-webkit-scrollbar-thumb:hover {
+      background: #818cf8;
+    }
+  </style>
 </head>
 <body>
-    <h1>Age</h1>
-    <div class="birthday-entry" data-name="Tayfun" data-date="1974-11-05T00:00:00">
-        <span>Tayfun</span> <span class="countdown"></span>
-    </div>
-    <div class="birthday-entry" data-name="Irmak" data-date="1975-10-15T00:00:00">
-        <span>Irmak</span> <span class="countdown"></span>
-    </div>
-    <div class="birthday-entry" data-name="Deniz" data-date="2012-02-17T14:31:00">
-        <span>Deniz</span> <span class="countdown"></span>
-    </div>
-    <div class="birthday-entry" data-name="Su" data-date="2014-06-06T08:30:00">
-        <span>Su</span> <span class="countdown"></span>
-    </div>
-    <div class="birthday-entry" data-name="Derin" data-date="2014-06-06T08:31:00">
-        <span>Derin</span> <span class="countdown"></span>
-    </div>
+  <div class="container">
+    <h1>♪ ScaleBuddy</h1>
+    <p class="subtitle">Comprehensive Music Theory Reference Tool</p>
+
+    <section class="input-section">
+      <div class="dropdowns-container">
+        <div class="dropdown-group">
+          <label for="root-note">Root Note (Pitch Class):</label>
+          <select id="root-note" required>
+            <option value="">-- Select Root --</option>
+            <option value="C">C</option>
+            <option value="C#">C#</option>
+            <option value="Db">Db</option>
+            <option value="D">D</option>
+            <option value="D#">D#</option>
+            <option value="Eb">Eb</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#</option>
+            <option value="Gb">Gb</option>
+            <option value="G">G</option>
+            <option value="G#">G#</option>
+            <option value="Ab">Ab</option>
+            <option value="A">A</option>
+            <option value="A#">A#</option>
+            <option value="Bb">Bb</option>
+            <option value="B">B</option>
+          </select>
+        </div>
+
+        <div class="dropdown-group">
+          <label for="scale-type">Scale Type:</label>
+          <select id="scale-type" required>
+            <option value="">-- Select Scale --</option>
+            
+            <!-- Diatonic Modes -->
+            <optgroup label="Diatonic Modes">
+              <option value="major">Major (Ionian)</option>
+              <option value="dorian">Dorian</option>
+              <option value="phrygian">Phrygian</option>
+              <option value="lydian">Lydian</option>
+              <option value="mixolydian">Mixolydian</option>
+              <option value="minor">Natural Minor (Aeolian)</option>
+              <option value="locrian">Locrian</option>
+            </optgroup>
+            
+            <!-- Minor Variants -->
+            <optgroup label="Minor Variants">
+              <option value="harmonicMinor">Harmonic Minor</option>
+              <option value="melodicMinor">Melodic Minor (Ascending)</option>
+              <option value="neapolitanMinor">Neapolitan Minor</option>
+              <option value="neapolitanMajor">Neapolitan Major</option>
+            </optgroup>
+            
+            <!-- Pentatonic & Blues -->
+            <optgroup label="Pentatonic & Blues">
+              <option value="majorPentatonic">Major Pentatonic</option>
+              <option value="minorPentatonic">Minor Pentatonic</option>
+              <option value="blues">Blues Scale</option>
+            </optgroup>
+            
+            <!-- Symmetric Scales -->
+            <optgroup label="Symmetric Scales">
+              <option value="wholeTone">Whole Tone</option>
+              <option value="diminishedHW">Diminished (Half-Whole)</option>
+              <option value="diminishedWH">Diminished (Whole-Half)</option>
+              <option value="augmented">Augmented</option>
+              <option value="tritone">Tritone</option>
+            </optgroup>
+            
+            <!-- Jazz & Contemporary -->
+            <optgroup label="Jazz & Contemporary">
+              <option value="majorBebop">Major Bebop</option>
+              <option value="minorBebop">Minor Bebop</option>
+              <option value="dominantBebop">Dominant Bebop</option>
+              <option value="prometheus">Prometheus</option>
+              <option value="enigmatic">Enigmatic</option>
+            </optgroup>
+            
+            <!-- Gypsy & Eastern European -->
+            <optgroup label="Gypsy & Eastern European">
+              <option value="hungarianMinor">Hungarian Minor</option>
+              <option value="hungarianGypsy">Hungarian Gypsy</option>
+              <option value="doubleHarmonic">Double Harmonic (Gypsy)</option>
+              <option value="phrygianDominant">Phrygian Dominant</option>
+            </optgroup>
+            
+            <!-- World & Exotic -->
+            <optgroup label="World & Exotic">
+              <option value="balinese">Balinese</option>
+              <option value="japanese">Japanese (In Sen)</option>
+              <option value="hirajoshi">Hirajoshi</option>
+              <option value="iwato">Iwato</option>
+              <option value="yo">Yo</option>
+              <option value="chinese">Chinese</option>
+              <option value="mongolian">Mongolian</option>
+              <option value="persian">Persian</option>
+              <option value="arabian">Arabian</option>
+              <option value="byzantine">Byzantine</option>
+              <option value="oriental">Oriental</option>
+            </optgroup>
+            
+            <!-- Chromatic -->
+            <optgroup label="Chromatic">
+              <option value="chromatic">Chromatic</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-message"></div>
+    </section>
+
+    <section id="results-section" class="results-section">
+      <div class="chord-display" id="chord-display"></div>
+
+      <div class="result-card">
+        <h3>Scale Notes</h3>
+        <div class="result-content scale-notes" id="scale-result">â€”</div>
+      </div>
+
+      <div class="result-card">        <h3>Scale Triads</h3>
+        <div class="result-content chord-list" id="triads-result">—</div>
+      </div>
+
+      <div class="result-card">        <h3>Scale Chords</h3>
+        <div class="result-content chord-list" id="chords-result">â€”</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ============================================
+    // 1. MUSIC DATA - Comprehensive Scales & Chords
+    // ============================================
     
-    <script src="script.js"></script>
+    const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    
+    const SCALE_DEGREES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    
+    const ENHARMONIC_EQUIVALENTS = {
+      'Db': 'C#',
+      'Eb': 'D#',
+      'Gb': 'F#',
+      'Ab': 'G#',
+      'Bb': 'A#'
+    };
+
+    // Comprehensive scale definitions (semitones from root)
+    const SCALES = {
+      // Diatonic Scales
+      major: [0, 2, 4, 5, 7, 9, 11],
+      minor: [0, 2, 3, 5, 7, 8, 10],
+      harmonicMinor: [0, 2, 3, 5, 7, 8, 11],
+      melodicMinor: [0, 2, 3, 5, 7, 9, 11],
+      dorian: [0, 2, 3, 5, 7, 9, 10],
+      phrygian: [0, 1, 3, 5, 7, 8, 10],
+      lydian: [0, 2, 4, 6, 7, 9, 11],
+      mixolydian: [0, 2, 4, 5, 7, 9, 10],
+      locrian: [0, 1, 3, 5, 6, 8, 10],
+      
+      // Pentatonic Scales
+      majorPentatonic: [0, 2, 4, 7, 9],
+      minorPentatonic: [0, 3, 5, 7, 10],
+      blues: [0, 3, 5, 6, 7, 10],
+      
+      // Whole Tone & Diminished
+      wholeTone: [0, 2, 4, 6, 8, 10],
+      diminishedHW: [0, 1, 3, 4, 6, 7, 9, 10],
+      diminishedWH: [0, 2, 3, 5, 6, 8, 9, 11],
+      
+      // Exotic/World Scales
+      hungarianMinor: [0, 2, 3, 6, 7, 8, 11],
+      doubleHarmonic: [0, 1, 4, 5, 7, 8, 11],
+      phrygianDominant: [0, 1, 4, 5, 7, 8, 10],
+      neapolitanMinor: [0, 1, 3, 5, 7, 8, 11],
+      neapolitanMajor: [0, 1, 3, 5, 7, 9, 11],
+      enigmatic: [0, 1, 4, 6, 8, 10, 11],
+      augmented: [0, 3, 4, 7, 8, 11],
+      prometheus: [0, 2, 4, 6, 9, 10],
+      tritone: [0, 1, 4, 6, 7, 10],
+      balinese: [0, 1, 5, 7, 8],
+      japanese: [0, 1, 5, 7, 10],
+      hirajoshi: [0, 4, 6, 7, 11],
+      iwato: [0, 1, 5, 6, 10],
+      yo: [0, 2, 5, 7, 9],
+      chinese: [0, 2, 4, 7, 9],
+      mongolian: [0, 2, 4, 7, 9],
+      persian: [0, 1, 4, 5, 6, 8, 11],
+      arabian: [0, 2, 3, 5, 6, 8, 10],
+      byzantine: [0, 1, 4, 5, 7, 8, 11],
+      hungarianGypsy: [0, 2, 3, 6, 7, 8, 11],
+      oriental: [0, 1, 4, 5, 6, 9, 10],
+      majorBebop: [0, 2, 4, 5, 7, 8, 9, 11],
+      minorBebop: [0, 2, 3, 5, 7, 8, 9, 11],
+      dominantBebop: [0, 2, 4, 5, 7, 9, 10, 11],
+      chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    };
+
+    // Scale names for display
+    const SCALE_NAMES = {
+      major: 'Major (Ionian)',
+      minor: 'Natural Minor (Aeolian)',
+      harmonicMinor: 'Harmonic Minor',
+      melodicMinor: 'Melodic Minor (Ascending)',
+      dorian: 'Dorian',
+      phrygian: 'Phrygian',
+      lydian: 'Lydian',
+      mixolydian: 'Mixolydian',
+      locrian: 'Locrian',
+      majorPentatonic: 'Major Pentatonic',
+      minorPentatonic: 'Minor Pentatonic',
+      blues: 'Blues Scale',
+      wholeTone: 'Whole Tone',
+      diminishedHW: 'Diminished (Half-Whole)',
+      diminishedWH: 'Diminished (Whole-Half)',
+      hungarianMinor: 'Hungarian Minor',
+      doubleHarmonic: 'Double Harmonic (Gypsy)',
+      phrygianDominant: 'Phrygian Dominant',
+      neapolitanMinor: 'Neapolitan Minor',
+      neapolitanMajor: 'Neapolitan Major',
+      enigmatic: 'Enigmatic',
+      augmented: 'Augmented',
+      prometheus: 'Prometheus',
+      tritone: 'Tritone',
+      balinese: 'Balinese',
+      japanese: 'Japanese (In Sen)',
+      hirajoshi: 'Hirajoshi',
+      iwato: 'Iwato',
+      yo: 'Yo',
+      chinese: 'Chinese',
+      mongolian: 'Mongolian',
+      persian: 'Persian',
+      arabian: 'Arabian',
+      byzantine: 'Byzantine',
+      hungarianGypsy: 'Hungarian Gypsy',
+      oriental: 'Oriental',
+      majorBebop: 'Major Bebop',
+      minorBebop: 'Minor Bebop',
+      dominantBebop: 'Dominant Bebop',
+      chromatic: 'Chromatic'
+    };
+
+    // Essential chord definitions (semitones from root)
+    // Organized by category for easier navigation
+    const CHORDS = {
+      // Basic Triads
+      'Major': [0, 4, 7],
+      'Minor': [0, 3, 7],
+      'Diminished': [0, 3, 6],
+      'Augmented': [0, 4, 8],
+      'Suspended 2nd': [0, 2, 7],
+      'Suspended 4th': [0, 5, 7],
+      'Power (5th)': [0, 7],
+      
+      // Sixth Chords
+      'Major 6th': [0, 4, 7, 9],
+      'Minor 6th': [0, 3, 7, 9],
+      '6/9': [0, 4, 7, 9, 14],
+      
+      // Seventh Chords
+      'Major 7th': [0, 4, 7, 11],
+      'Dominant 7th': [0, 4, 7, 10],
+      'Minor 7th': [0, 3, 7, 10],
+      'Minor Major 7th': [0, 3, 7, 11],
+      'Half-Diminished (m7b5)': [0, 3, 6, 10],
+      'Fully Diminished 7th': [0, 3, 6, 9],
+      '7(b5)': [0, 4, 6, 10],
+      '7(#5)': [0, 4, 8, 10],
+      '7(b9)': [0, 4, 7, 10, 13],
+      '7(#9)': [0, 4, 7, 10, 15],
+      '7sus4': [0, 5, 7, 10],
+      
+      // Extended Chords
+      '9th': [0, 4, 7, 10, 14],
+      'Major 9th': [0, 4, 7, 11, 14],
+      'Minor 9th': [0, 3, 7, 10, 14],
+      '11th': [0, 4, 7, 10, 14, 17],
+      'Minor 11th': [0, 3, 7, 10, 14, 17],
+      '13th': [0, 4, 7, 10, 14, 17, 21],
+      'Minor 13th': [0, 3, 7, 10, 14, 17, 21],
+      
+      // Added Tone Chords
+      'add2': [0, 2, 4, 7],
+      'add4': [0, 4, 5, 7],
+      'add9': [0, 4, 7, 14],
+      'add11': [0, 4, 7, 17],
+      'add13': [0, 4, 7, 21],
+      
+      // Suspended Chords
+      'sus2': [0, 2, 7],
+      'sus4': [0, 5, 7],
+      '7sus2': [0, 2, 7, 10],
+      '7sus4': [0, 5, 7, 10],
+      
+      // Altered Chords
+      'Altered (7alt)': [0, 4, 7, 10, 13, 15, 18],
+      
+      // Special/Classical Chords
+      'Neapolitan (N6)': [0, 3, 7],
+      'Italian 6th': [0, 4, 10],
+      'French 6th': [0, 4, 9, 10],
+      'German 6th': [0, 4, 10, 3],
+      'Augmented Major 7': [0, 4, 8, 11],
+    };
+
+    // ============================================
+    // 2. MUSIC LOGIC
+    // ============================================
+
+    function getNoteIndex(note) {
+      // Support explicit flats (Db, Eb, Gb, Ab, Bb) by mapping to their enharmonic sharps
+      const direct = NOTES.indexOf(note);
+      if (direct !== -1) return direct;
+      if (ENHARMONIC_EQUIVALENTS[note]) {
+        return NOTES.indexOf(ENHARMONIC_EQUIVALENTS[note]);
+      }
+      return -1;
+    }
+
+    function getScaleNotes(rootNote, scaleIntervals) {
+      // Get the root note index in SCALE_DEGREES
+      const rootDegreeIndex = SCALE_DEGREES.indexOf(rootNote.replace(/#|b/g, ''));
+      const rootIndex = getNoteIndex(rootNote);
+      
+      const scaleNotes = [];
+      
+      for (let i = 0; i < scaleIntervals.length; i++) {
+        const interval = scaleIntervals[i];
+        const targetSemitone = (rootIndex + interval) % 12;
+        
+        // Get the scale degree name (C, D, E, F, G, A, B)
+        const degreeName = SCALE_DEGREES[(rootDegreeIndex + i) % 7];
+        
+        // Find the natural note position
+        const degreeNaturalIndex = NOTES.indexOf(degreeName);
+        
+        // Calculate how many semitones from the natural note to reach the target
+        const semitonesToTarget = (targetSemitone - degreeNaturalIndex + 12) % 12;
+        
+        let noteToUse = degreeName;
+        if (semitonesToTarget === 0) {
+          noteToUse = degreeName;
+        } else if (semitonesToTarget === 1) {
+          noteToUse = degreeName + '#';
+        } else if (semitonesToTarget === 11) {
+          noteToUse = degreeName + 'b';
+        }
+        
+        scaleNotes.push(noteToUse);
+      }
+      
+      return scaleNotes;
+    }
+
+    function getChordNotes(rootNote, chordIntervals, parentScale) {
+      const notes = chordIntervals.map(interval => {
+        const semitone = (getNoteIndex(rootNote) + interval) % 12;
+        return NOTES[semitone];
+      });
+      
+      // Apply enharmonic spelling based on parent scale
+      return applyEnharmonicSpelling(notes, parentScale);
+    }
+
+    function applyEnharmonicSpelling(notes, parentScale) {
+      // Maps note names to their degree in the parent scale
+      const degreeMap = new Map();
+      for (let i = 0; i < parentScale.length; i++) {
+        const baseName = parentScale[i].replace(/#|b/g, '');
+        degreeMap.set(baseName, parentScale[i]);
+      }
+      
+      return notes.map(note => {
+        const baseName = note.replace(/#|b/g, '');
+        // Only apply enharmonic spelling if the base name is in the scale
+        // AND the scale's spelling matches the note's spelling
+        if (degreeMap.has(baseName)) {
+          const scaleSpelling = degreeMap.get(baseName);
+          // If the note has an accidental, check if it matches the scale spelling
+          if (note.includes('#') || note.includes('b')) {
+            // Note has accidental, keep it (don't replace G# with G)
+            return note;
+          }
+          // Note has no accidental, use scale spelling
+          return scaleSpelling;
+        }
+        // Base name not in scale, keep original
+        return note;
+      });
+    }
+
+    function getAllChordsForScale(rootNote, scaleIntervals) {
+      const parentScale = getScaleNotes(rootNote, scaleIntervals);
+      const chords = [];
+      
+      for (const [chordName, chordIntervals] of Object.entries(CHORDS)) {
+        const chordNotes = getChordNotes(rootNote, chordIntervals, parentScale);
+        chords.push({
+          name: chordName,
+          notes: chordNotes
+        });
+      }
+      
+      // Sort alphabetically by chord name
+      chords.sort((a, b) => a.name.localeCompare(b.name));
+      
+      return chords;
+    }
+
+    // Get triads for each scale degree with Roman numeral analysis
+    function getScaleTriads(rootNote, scaleIntervals) {
+      const scaleNotes = getScaleNotes(rootNote, scaleIntervals);
+      const triads = [];
+      
+      // Roman numerals for each degree (I, ii, iii, IV, V, vi, vii° for major)
+      const romanNumerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
+      
+      for (let i = 0; i < scaleNotes.length; i++) {
+        const degreeRoot = scaleNotes[i];
+        
+        // Build triad (root, 3rd, 5th) using scale intervals
+        // For a triad, we need the root, the note 2 scale degrees up (3rd), and 4 scale degrees up (5th)
+        const thirdDegree = (i + 2) % scaleNotes.length;
+        const fifthDegree = (i + 4) % scaleNotes.length;
+        
+        const triadNotes = [
+          degreeRoot,
+          scaleNotes[thirdDegree],
+          scaleNotes[fifthDegree]
+        ];
+        
+        // Determine chord quality (major, minor, diminished, augmented)
+        const triadQuality = getTriadQuality(scaleNotes, i, scaleIntervals);
+        
+        // Get Roman numeral (uppercase for major, lowercase for minor, add ° for diminished, + for augmented)
+        let romanNumeral = romanNumerals[i % 7];
+        if (triadQuality === 'minor') {
+          romanNumeral = romanNumeral.toLowerCase();
+        } else if (triadQuality === 'diminished') {
+          romanNumeral = romanNumeral.toLowerCase() + '°';
+        } else if (triadQuality === 'augmented') {
+          romanNumeral = romanNumeral + '+';
+        }
+        
+        // Get chord name based on quality
+        let chordName = '';
+        if (triadQuality === 'major') chordName = 'Major';
+        else if (triadQuality === 'minor') chordName = 'Minor';
+        else if (triadQuality === 'diminished') chordName = 'Diminished';
+        else if (triadQuality === 'augmented') chordName = 'Augmented';
+        
+        triads.push({
+          degree: i + 1,
+          romanNumeral: romanNumeral,
+          notes: triadNotes,
+          quality: triadQuality,
+          chordName: chordName,
+          rootNote: degreeRoot
+        });
+      }
+      
+      return triads;
+    }
+
+    // Determine triad quality based on intervals
+    function getTriadQuality(scaleNotes, degreeIndex, scaleIntervals) {
+      // Get the intervals from the root note
+      const rootSemitone = scaleIntervals[degreeIndex];
+      const thirdSemitone = scaleIntervals[(degreeIndex + 2) % 7];
+      const fifthSemitone = scaleIntervals[(degreeIndex + 4) % 7];
+      
+      // Calculate intervals between notes (wrapping around 12)
+      const thirdInterval = (thirdSemitone - rootSemitone + 12) % 12;
+      const fifthInterval = (fifthSemitone - rootSemitone + 12) % 12;
+      
+      // Determine quality
+      if (thirdInterval === 4 && fifthInterval === 7) return 'major';
+      if (thirdInterval === 3 && fifthInterval === 7) return 'minor';
+      if (thirdInterval === 3 && fifthInterval === 6) return 'diminished';
+      if (thirdInterval === 4 && fifthInterval === 8) return 'augmented';
+      
+      return 'unknown';
+    }
+
+    // ============================================
+    // 3. UI LOGIC
+    // ============================================
+
+    function updateDisplay() {
+      const rootNote = document.getElementById('root-note').value;
+      const scaleType = document.getElementById('scale-type').value;
+      const errorDiv = document.getElementById('error-message');
+      const resultsSection = document.getElementById('results-section');
+
+      // Clear error
+      errorDiv.textContent = '';
+      errorDiv.classList.remove('show');
+
+      // Hide results if either dropdown is empty
+      if (!rootNote || !scaleType) {
+        resultsSection.classList.remove('show');
+        
+        // Highlight unselected dropdowns
+        const rootSelect = document.getElementById('root-note');
+        const scaleSelect = document.getElementById('scale-type');
+        
+        if (!rootNote && rootSelect.value === '') {
+          rootSelect.style.borderColor = '#fbbf24';
+          rootSelect.style.background = '#fffbeb';
+        } else {
+          rootSelect.style.borderColor = '';
+          rootSelect.style.background = '';
+        }
+        
+        if (!scaleType && scaleSelect.value === '') {
+          scaleSelect.style.borderColor = '#fbbf24';
+          scaleSelect.style.background = '#fffbeb';
+        } else {
+          scaleSelect.style.borderColor = '';
+          scaleSelect.style.background = '';
+        }
+        
+        return;
+      }
+
+      // Clear highlighting
+      document.getElementById('root-note').style.borderColor = '';
+      document.getElementById('root-note').style.background = '';
+      document.getElementById('scale-type').style.borderColor = '';
+      document.getElementById('scale-type').style.background = '';
+
+      // Get scale data
+      const scaleIntervals = SCALES[scaleType];
+      if (!scaleIntervals) {
+        errorDiv.textContent = 'Invalid scale type selected.';
+        errorDiv.classList.add('show');
+        return;
+      }
+
+      // Calculate scale notes
+      const scaleNotes = getScaleNotes(rootNote, scaleIntervals);
+      
+      // Calculate triads for each scale degree
+      const triads = getScaleTriads(rootNote, scaleIntervals);
+      
+      // Calculate all chords for this scale
+      const chords = getAllChordsForScale(rootNote, scaleIntervals);
+
+      // Render results
+      const scaleName = SCALE_NAMES[scaleType];
+      document.getElementById('chord-display').textContent = `${rootNote} ${scaleName}`;
+      
+      // Render scale notes with technical names
+      const scaleDegreeNames = ['1', '2', '♭3', '3', '4', '5', '♭6', '6', '♭7', '7'];
+      const scaleNotesWithDegrees = scaleNotes.map((note, index) => {
+        // Get the degree name based on the scale type
+        let degreeName = '';
+        if (scaleType === 'major') {
+          const degrees = ['1', '2', '3', '4', '5', '6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'minor' || scaleType === 'harmonicMinor' || scaleType === 'melodicMinor') {
+          const degrees = ['1', '2', '♭3', '4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'dorian') {
+          const degrees = ['1', '2', '♭3', '4', '5', '6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'phrygian') {
+          const degrees = ['1', '♭2', '♭3', '4', '5', '♭6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'lydian') {
+          const degrees = ['1', '2', '3', '♯4', '5', '6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'mixolydian') {
+          const degrees = ['1', '2', '3', '4', '5', '6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'locrian') {
+          const degrees = ['1', '♭2', '♭3', '4', '♭5', '♭6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'majorPentatonic') {
+          const degrees = ['1', '2', '3', '5', '6'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'minorPentatonic') {
+          const degrees = ['1', '♭3', '4', '5', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'blues') {
+          const degrees = ['1', '♭3', '4', '♭5', '5', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'wholeTone') {
+          const degrees = ['1', '2', '3', '♯4', '♯5', '♯6'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'diminishedHW' || scaleType === 'diminishedWH') {
+          const degrees = ['1', '♭2', '♭3', '3', '♯4', '5', '6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'hungarianMinor') {
+          const degrees = ['1', '2', '♭3', '♯4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'doubleHarmonic') {
+          const degrees = ['1', '♭2', '3', '4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'phrygianDominant') {
+          const degrees = ['1', '♭2', '3', '4', '5', '♭6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'neapolitanMinor' || scaleType === 'neapolitanMajor') {
+          const degrees = ['1', '♭2', '♭3', '4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'enigmatic') {
+          const degrees = ['1', '♭2', '3', '♯4', '♯5', '♯6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'augmented') {
+          const degrees = ['1', '♭3', '3', '5', '♯5', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'prometheus') {
+          const degrees = ['1', '2', '3', '♯4', '6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'tritone') {
+          const degrees = ['1', '♭2', '3', '♭5', '5', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'balinese') {
+          const degrees = ['1', '♭2', '4', '5', '♭6'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'japanese') {
+          const degrees = ['1', '♭2', '4', '5', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'hirajoshi') {
+          const degrees = ['1', '3', '♯4', '5', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'iwato') {
+          const degrees = ['1', '♭2', '4', '♭5', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'yo') {
+          const degrees = ['1', '2', '4', '5', '6'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'chinese' || scaleType === 'mongolian') {
+          const degrees = ['1', '2', '3', '5', '6'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'persian') {
+          const degrees = ['1', '♭2', '3', '4', '♭5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'arabian') {
+          const degrees = ['1', '2', '♭3', '4', '♭5', '♭6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'byzantine') {
+          const degrees = ['1', '♭2', '3', '4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'hungarianGypsy') {
+          const degrees = ['1', '2', '♭3', '♯4', '5', '♭6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'oriental') {
+          const degrees = ['1', '♭2', '3', '4', '♭5', '6', '♭7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'majorBebop') {
+          const degrees = ['1', '2', '3', '4', '5', '♭6', '6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'minorBebop') {
+          const degrees = ['1', '2', '♭3', '4', '5', '♭6', '6', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'dominantBebop') {
+          const degrees = ['1', '2', '3', '4', '5', '6', '♭7', '7'];
+          degreeName = degrees[index];
+        } else if (scaleType === 'chromatic') {
+          const degrees = ['1', '♯1', '2', '♯2', '3', '4', '♯4', '5', '♯5', '6', '♯6', '7'];
+          degreeName = degrees[index];
+        }
+        
+        return `${note} (${degreeName})`;
+      }).join(' → ');
+      
+      // Render chord functions for each scale degree
+      const chordFunctions = scaleNotes.map((note, index) => {
+        let functionText = '';
+        if (scaleType === 'major') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Leading Tone'];
+          functionText = functions[index];
+        } else if (scaleType === 'minor' || scaleType === 'harmonicMinor' || scaleType === 'melodicMinor') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Leading Tone'];
+          functionText = functions[index];
+        } else if (scaleType === 'dorian') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Subtonic'];
+          functionText = functions[index];
+        } else if (scaleType === 'phrygian') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Subtonic'];
+          functionText = functions[index];
+        } else if (scaleType === 'lydian') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Leading Tone'];
+          functionText = functions[index];
+        } else if (scaleType === 'mixolydian') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Subtonic'];
+          functionText = functions[index];
+        } else if (scaleType === 'locrian') {
+          const functions = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Subtonic'];
+          functionText = functions[index];
+        } else {
+          functionText = 'Scale Degree';
+        }
+        
+        return `<span class="chord-name">${note}</span> <span class="chord-notes">${functionText}</span>`;
+      }).join('\n');
+      
+      document.getElementById('scale-result').innerHTML = scaleNotesWithDegrees + '<br><br>' + chordFunctions;
+
+      // Render triads (compact format: I C - E - G (C Major), then empty line, then ii D - F - A (D Minor), etc.)
+      const triadsHTML = triads.map(triad => {
+        return `<span class="chord-name">${triad.romanNumeral}</span> <span class="chord-notes">${triad.notes.join(' - ')} (${triad.rootNote} ${triad.chordName})</span>`;
+      }).join('\n\n');
+      
+      document.getElementById('triads-result').innerHTML = triadsHTML;
+
+      // Render chord list (compact format: C11th C - E - G - A - D - F, then empty line, then next chord)
+      const chordsHTML = chords.map(chord => {
+        return `<span class="chord-name">${rootNote}${chord.name}</span> <span class="chord-notes">${chord.notes.join(' - ')}</span>`;
+      }).join('\n\n');
+      
+      document.getElementById('chords-result').innerHTML = chordsHTML;
+
+      // Show results
+      resultsSection.classList.add('show');
+    }
+
+    // ============================================
+    // 4. EVENT HANDLERS
+    // ============================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auto-update on dropdown changes
+      document.getElementById('root-note').addEventListener('change', updateDisplay);
+      document.getElementById('scale-type').addEventListener('change', updateDisplay);
+
+      // Focus first dropdown on load
+      document.getElementById('root-note').focus();
+    });
+  </script>
 </body>
 </html>
