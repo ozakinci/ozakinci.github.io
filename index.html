@@ -174,6 +174,34 @@
       50%       { opacity: 0.3; }
     }
 
+    /* LIFE BAR */
+    .life-bar-wrap {
+      margin-top: 0.75rem;
+    }
+
+    .life-bar-track {
+      width: 100%;
+      height: 3px;
+      background: #c8dfd7;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .life-bar-fill {
+      height: 100%;
+      background: #dfa09a;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .life-bar-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.3rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
     footer {
       max-width: 860px;
       margin: 3rem auto 0;
@@ -212,28 +240,32 @@
 //    title : string
 //    date  : "YYYY-MM-DD"
 //    type  : "birthday" | "anniversary" | "countdown" | "milestone" | any string
+//    sex   : "m" or "f"  (required for birthday type only)
 //
-//  birthday    → shows current age + days until next birthday
+//  birthday    → shows current age + life progress pie + days until next birthday
 //  anniversary → shows years elapsed + days until next anniversary
 //  countdown   → future: "X to go", past: "X ago"
 //  milestone   → past event, always counts up
 //  anything else → same as countdown
 //
 //  Copy-paste template:
-//  { title: "Name or event", date: "YYYY-MM-DD", type: "birthday" },
+//  { title: "Name or event", date: "YYYY-MM-DD", type: "birthday", sex: "m" },
 // ─────────────────────────────────────────────
 const ENTRIES = [
-  { title: "Tayfun",             date: "1974-11-05", type: "birthday"    },
-  { title: "Irmak",              date: "1975-10-15", type: "birthday"    },
-  { title: "Deniz",              date: "2012-02-17", type: "birthday"    },
-  { title: "Su",                 date: "2014-06-06", type: "birthday"    },
-  { title: "Derin",              date: "2014-06-06", type: "birthday"    },
-  { title: "Kalpler Bir",        date: "2010-09-27", type: "anniversary" },
-  { title: "Istanbul",           date: "2026-04-05", type: "holiday"     },
-  { title: "Barco",              date: "2011-02-01", type: "milestone"   },
-  { title: "FedPol",             date: "2025-10-01", type: "milestone"   },
+  { title: "Tayfun",             date: "1974-11-05", type: "birthday",    sex: "m" },
+  { title: "Irmak",              date: "1975-10-15", type: "birthday",    sex: "f" },
+  { title: "Deniz",              date: "2012-02-17", type: "birthday",    sex: "m" },
+  { title: "Su",                 date: "2014-06-06", type: "birthday",    sex: "f" },
+  { title: "Derin",              date: "2014-06-06", type: "birthday",    sex: "f" },
+  { title: "Kalpler Bir",        date: "2010-09-27", type: "anniversary"            },
+  { title: "Istanbul",           date: "2026-04-05", type: "holiday"                },
+  { title: "Barco",              date: "2011-02-01", type: "milestone"              },
+  { title: "FedPol",             date: "2025-10-01", type: "milestone"              },
 ];
 // ─────────────────────────────────────────────
+
+// ── Life expectancy (Belgium 2024, Statbel) ──
+const LIFE_EXPECTANCY = { m: 80.3, f: 84.4 };
 
 // ── Utilities ──────────────────────────────
 function parseDate(str) {
@@ -277,6 +309,37 @@ function daysFromNow(entry, now) {
   return Math.round((date - now) / 86400000);
 }
 
+// ── Life progress bar ────────────────────────
+function lifeBar(entry, now) {
+  const birth = parseDate(entry.date);
+  const ageYears = ymd(birth, now).years;
+  if (ageYears < 18) return '';
+
+  const sex = (entry.sex || 'm').toLowerCase();
+  const totalYears = LIFE_EXPECTANCY[sex] || 80.3;
+  const death = new Date(birth.getFullYear() + totalYears, birth.getMonth(), birth.getDate());
+  const totalMs = death - birth;
+  const livedMs = now - birth;
+  const pct = Math.min(Math.max(livedMs / totalMs, 0), 1);
+  const pctLabel = Math.round(pct * 100) + '%';
+
+  const remaining = ymd(now, death);
+  const remainText = remaining.years > 0
+    ? remaining.years + (remaining.years === 1 ? ' year' : ' years') + ' remaining'
+    : formatYMD(remaining, 'remaining');
+
+  return `
+    <div class="life-bar-wrap">
+      <div class="life-bar-track">
+        <div class="life-bar-fill" style="width:${pct * 100}%"></div>
+      </div>
+      <div class="life-bar-meta">
+        <span>${pctLabel} of life lived</span>
+        <span>${remainText}</span>
+      </div>
+    </div>`;
+}
+
 // ── Badge ───────────────────────────────────
 function badgeClass(type) {
   const t = type.toLowerCase();
@@ -291,7 +354,7 @@ function badgeClass(type) {
 function buildTimeCell(entry, now) {
   const date = parseDate(entry.date);
   const type = entry.type.toLowerCase();
-  let mainClass = '', mainText = '', subText = '';
+  let mainClass = '', mainText = '', subText = '', extraHtml = '';
 
   if (type === 'birthday') {
     const age = ymd(date, now);
@@ -300,6 +363,7 @@ function buildTimeCell(entry, now) {
     mainClass = 'age';
     mainText  = age.years + ' years old';
     subText   = formatYMD(toNext, 'until next birthday');
+    extraHtml = lifeBar(entry, now);
 
   } else if (type === 'anniversary') {
     const elapsed = ymd(date, now);
@@ -320,7 +384,7 @@ function buildTimeCell(entry, now) {
     }
   }
 
-  return { mainClass, mainText, subText };
+  return { mainClass, mainText, subText, extraHtml };
 }
 
 // ── Render ───────────────────────────────────
@@ -349,7 +413,7 @@ function render() {
   });
 
   tbody.innerHTML = sorted.map(entry => {
-    const { mainClass, mainText, subText } = buildTimeCell(entry, now);
+    const { mainClass, mainText, subText, extraHtml } = buildTimeCell(entry, now);
     const date = parseDate(entry.date);
     const dateLabel = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -364,6 +428,7 @@ function render() {
           <span class="live-dot"></span>${mainText}
         </div>
         ${subText ? `<div class="time-sub">${subText}</div>` : ''}
+        ${extraHtml || ''}
       </td>
     </tr>`;
   }).join('');
